@@ -1,0 +1,71 @@
+using System;
+using System.Collections.Generic;
+
+
+public class AbbreviatedNumber {
+
+    /// <summary>
+    /// Abbreviates a number
+    /// 
+    /// decimals should be passed as a sting for how many to show
+    /// 
+    /// i.e 4 dec pass "0000"
+    /// </summary>
+    /// <param name="number"></param>
+    /// <param name="decimals"></param>
+    /// <returns></returns>
+    public static string  Abbreviate(int  number, string decimals="00"){    return Abbreviate(decimal.Parse(number.ToString()), decimals);}
+    public static string  Abbreviate(long  number, string decimals="00"){   return Abbreviate(decimal.Parse(number.ToString()), decimals);}
+    public static string  Abbreviate(decimal number, string decimals="00"){
+        string aNum = number.ToString();
+        if(number>=1000){  
+            try{         
+
+            foreach(KeyValuePair<int, string[]> entry in abbreviations){
+                if(number >= (decimal)Math.Pow(10,  entry.Key)){
+                    aNum = String.Format("{0:0."+decimals+"} " + entry.Value[0],(number / (decimal)Math.Pow(10, entry.Key)) );
+                    break;
+                }
+            }
+            }catch(OverflowException){
+                return "99.99 Oc+";
+            }catch(Exception e){
+                UnityEngine.Debug.LogWarning($"Number.Abbreviate: {e.Message}");
+                return "0";
+            }
+
+
+        }
+        return aNum;
+    }
+
+    public static Dictionary<int,string[]> abbreviations {
+        get {
+            return new Dictionary<int,string[]>{
+                //{66,    new string[]{"Uvg", "unvigintillion"}},
+                //{63,    new string[]{"Vg",  "vigintillion"}},
+                //{60,    new string[]{"Nod", "novemdecillion"}},
+                //{57,    new string[]{"Ocd", "octodecillion"}},
+                //{54,    new string[]{"Spd", "septendecillion"}},
+                //{51,    new string[]{"Sxd", "sexdecillion"}}, 
+                //{48,    new string[]{"Qid", "quindecillion"}},                         
+                //{45,    new string[]{"Qad", "quattuordecillion"}},                           
+                //{42,    new string[]{"Td",  "tredecillion"}},                            
+                //{39,    new string[]{"Dd",  "duodecillion"}},                    	     
+                //{36,    new string[]{"Ud",  "undecillion"}},                    	     
+                //{33,    new string[]{"Dc", "decillion"}},                        
+                //{30,    new string[]{"No", "nonillion"}},                        
+                {27,    new string[]{"Oc", "octillion"}},   
+                {24,    new string[]{"Sp", "septillion"}},	     
+                {21,    new string[]{"Sx", "sextillion"}},	 
+                {18,    new string[]{"Qi", "quintillion"}},	 
+                {15,    new string[]{"Qa", "quadrillion"}},
+                {12,    new string[]{"T", "trillion"}},
+                {9,     new string[]{"B", "Billion"}},
+                {6,     new string[]{"M", "Million"}},	 
+                {3,     new string[]{"K", "Thousand"} }                   
+            };	 
+        }
+    }
+
+}
