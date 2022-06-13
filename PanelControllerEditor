@@ -1,0 +1,35 @@
+using UnityEngine;
+using UnityEditor;
+
+[CustomEditor(typeof(PanelController))]
+class PanelControllerEditor : Editor {
+
+    PanelController mTarget => (PanelController)target;
+    bool instant = false;
+
+    bool Instant => Application.isPlaying ? instant : true; // corutine not supported in Editor so has to be instant
+
+    public override void OnInspectorGUI() {
+        
+        instant = GUILayout.Toggle(instant, "Instant");
+        
+        GUILayout.BeginHorizontal();
+        if(mTarget.Closed){
+            if(GUILayout.Button("Show")){  Open(); }
+        }else{
+            if(GUILayout.Button("Hide")){  Close(); }
+        }            
+        GUILayout.EndHorizontal();
+
+        DrawDefaultInspector();
+        
+    }
+    
+
+    void Open(){
+        mTarget.Open(Instant);
+    }
+    void Close(){
+        mTarget.Close(Instant); 
+    }
+}
