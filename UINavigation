@@ -1,0 +1,61 @@
+using UnityEngine;
+using UnityEngine.UI;
+using UnityEngine.EventSystems;
+
+//TODO: revist this and see it is still usfull or if we need to update it
+
+public class UINavigation : MonoBehaviour {
+
+		public GameObject firstSelected;
+		public Button     submitButton;
+		private EventSystem system   {get{return EventSystem.current;}}
+		private Selectable rightNext {get{return system.currentSelectedGameObject.GetComponent<Selectable>().FindSelectableOnRight();}}
+		private Selectable leftNext  {get{return system.currentSelectedGameObject.GetComponent<Selectable>().FindSelectableOnLeft();}}
+		private Selectable downNext  {get{return system.currentSelectedGameObject.GetComponent<Selectable>().FindSelectableOnDown();}}
+		private Selectable upNext    {get{return system.currentSelectedGameObject.GetComponent<Selectable>().FindSelectableOnUp();}}
+		
+		void Start(){
+			if(system==null){
+				Debug.LogError("Trying to use UINavigation with no EventSystem in the scene, disabling UINavigation");
+				enabled=false;
+			}
+		}
+
+		void OnEnable(){
+			// ugly hack for UI, first selected will not appear to be selected in the same frame as enable
+			// TODO: Does anyone have a fix for this? - have not tested the current unity version maybe they fixed the glitch?			
+			Invoke("SetFirstSelected", 0.1f);
+		}
+
+		void Update(){
+			if (Input.GetKeyDown(KeyCode.Tab)){
+				if(system.currentSelectedGameObject != null){
+					SelectNext();
+				}else{
+					SetFirstSelected();
+				}            	         
+        	}
+			if((Input.GetKeyDown(KeyCode.Return) || Input.GetKeyDown(KeyCode.KeypadEnter)) && submitButton != null){
+				submitButton.onClick.Invoke();
+			}
+		}
+		
+		void SetFirstSelected(){
+			if(system!=null && firstSelected!=null){
+				system.SetSelectedGameObject(null);
+				system.SetSelectedGameObject(firstSelected);				
+			}
+		}
+
+		void SelectNext(){
+			Selectable next = downNext;         
+			if (next != null){ 
+				system.SetSelectedGameObject(next.gameObject); 
+				if(!next.gameObject.activeSelf){
+					SelectNext();
+				}
+			}
+		}
+		
+
+}
