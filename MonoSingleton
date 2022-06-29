@@ -10,32 +10,31 @@ using UnityEngine;
 ///     your code ...
 ///  }
 /// Also if you dont want the instance to destroy pass true in awake like -> base.Awake(true);
+/// and if you want only destroy the component vs the whole gameObject pass true in awake like -> base.Awake(true, true);
 /// /// </summary>
-namespace Pixelakes {
-
-	public class MonoSingleton<T> : MonoBehaviour where T : Object {
 
 
-		/// <summary>
-		/// The instance
-		/// </summary>
-		/// <value></value>
-		public static T i {get; private set;}
-		
-		protected void Awake(bool presist = false, bool destroyCompnent=false ) {
-            // if not created yet then cache it
-			if (i == null) {
-				i = this as T;
-            // destroy the newest one
-			} else if (i != this) {
-                if(destroyCompnent){// destroy just this script or the whole game object
-                    Destroy(this); 
-                }else{
-                    Destroy(gameObject); 
-                }				
-				return;
-			}
-			if (presist) { DontDestroyOnLoad(gameObject); }
-		}
-	}
+public class MonoSingleton<T> : MonoBehaviour where T : Object {
+    /// <summary>
+    /// The Static instance referance
+    /// </summary>
+    /// <value></value>
+    public static T i {get; private set;}
+    
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="presist"></param>
+    /// <param name="destroyCompnent"></param>
+    protected void Awake(bool presist = false, bool destroyCompnent=false ) {
+        // if not created yet then cache it
+        if (i == null) {
+            i = this as T;
+        // destroy the newest one
+        } else if (i != this) {
+            Destroy( (destroyCompnent) ? this : gameObject); // destroy just this script or the whole game object	
+            return; // exit right away so nothing else runs
+        }
+        if (presist) { DontDestroyOnLoad(gameObject); }
+    }
 }
